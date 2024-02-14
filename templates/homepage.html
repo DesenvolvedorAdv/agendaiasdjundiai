@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link href="../static/css/hero.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+{% endblock %}
+{% block content %}
+    <div class="justify-start items-start inline-flex bg-black" style="width: 100%; height: 100%;">
+        <div class="espaco-superior w-[1440px] h-[802px] flex-col justify-start items-center gap-0 inline-flex">
+            <div class="w-[1344px] h-[78px] text-white text-[70px] font-bold font-['Roboto'] leading-[90px]">Reserva das Salas</div>
+            <div class="hero-section bg-black">
+                <video class="hero-video" loop autoplay muted playsinline preload="auto" src="URL_DO_SEU_VIDEO.mp4" type="video/mp4"></video>
+                <div class="hero-content">
+                    <h2 class="subtitle">Reserva das Salas</h2>
+                    <h1 class="title">IASD</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col justify-start items-start gap-20 bg-white px-4 py-7 md:px-16 md:py-28 w-full max-w-screen-xl mx-auto">
+        <div class="flex flex-col md:flex-row self-stretch justify-start items-start gap-20">
+            <div class="flex flex-col justify-start items-start gap-8 grow">
+                <div class="flex flex-col justify-start items-start gap-4">
+                    <div class="text-black text-3xl md:text-5xl font-bold">Reservas Descomplicadas: Guia do App</div>
+                    <div class="text-black text-base md:text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.</div>
+                </div>
+            </div>
+            <div class="flex flex-col justify-start items-start gap-4 grow">
+                <!-- Time Line Step 1 -->
+                <div class="flex flex-col md:flex-row justify-start items-start gap-10">
+                    <div class="flex flex-col justify-start items-center gap-4">
+                        <div class="w-12 h-12 bg-black relative"></div>
+                        <div class="w-0 h-[100px] md:w-[100px] md:h-0 md:rotate-90 border-2 border-black"></div>
+                    </div>
+                    <div class="flex flex-col justify-start items-start gap-2.5 grow">
+                        <div class="text-black text-xl font-bold">Envio de Solicitação</div>
+                        <div class="text-black text-base">Após escolher a sala desejada, selecione o horário disponível. Nosso pop-up intuitivo simplifica o processo, proporcionando facilidade e praticidade na realização do agendamento.</div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-start items-start gap-10">
+                    <div class="flex flex-col justify-start items-center gap-4">
+                        <div class="w-12 h-12 bg-black relative"></div>
+                        <div class="w-0 h-[100px] md:w-[100px] md:h-0 md:rotate-90 border-2 border-black"></div>
+                    </div>
+                    <div class="flex flex-col justify-start items-start gap-2.5 grow">
+                        <div class="text-black text-xl font-bold">Envio de Solicitação</div>
+                        <div class="text-black text-base">Após escolher a sala desejada, selecione o horário disponível. Nosso pop-up intuitivo simplifica o processo, proporcionando facilidade e praticidade na realização do agendamento.</div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-start items-start gap-10">
+                    <div class="flex flex-col justify-start items-center gap-4">
+                        <div class="w-12 h-12 bg-black relative"></div>
+                        <div class="w-0 h-[100px] md:w-[100px] md:h-0 md:rotate-90 border-2 border-black"></div>
+                    </div>
+                    <div class="flex flex-col justify-start items-start gap-2.5 grow">
+                        <div class="text-black text-xl font-bold">Envio de Solicitação</div>
+                        <div class="text-black text-base">Após escolher a sala desejada, selecione o horário disponível. Nosso pop-up intuitivo simplifica o processo, proporcionando facilidade e praticidade na realização do agendamento.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- <div class="timeline-container">
+        <div class="timeline-item">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+                <h3>Envio de Solicitação</h3>
+                <p>Após escolher a sala desejada, selecione o horário disponível. Nosso pop-up intuitivo simplifica o processo, proporcionando facilidade e praticidade na realização do agendamento.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+                <h3>Acompanhamento de Reserva</h3>
+                <p>Confira o status das suas reservas em seu perfil. Mantemos você atualizado sobre suas solicitações, proporcionando uma maneira fácil e clara de visualizar o calendário.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-icon"></div>
+            <div class="timeline-content">
+                <h3>Dúvidas Frequentes (FAQ)</h3>
+                <p>Acesse nossa seção de Perguntas Frequentes para obter respostas rápidas e claras. Encontre informações adicionais e esclareça qualquer dúvida que possa surgir durante o processo de reserva.</p>
+            </div>
+        </div>
+
+        <!-- Repita para os outros itens da timeline -->
+    <!--</div> -->
+    <!-- <div id="margem" style="width: 100%; height: 70px;"></div>
+    <div style="width: 100%; height: 100%; padding-left: 64px; padding-right: 64px; padding-top: 112px; padding-bottom: 112px; background: white; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 80px; display: inline-flex">
+        <div style="align-self: stretch; justify-content: flex-start; align-items: flex-start; gap: 80px; display: inline-flex">
+            <div style="flex: 1 1 0; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 32px; display: inline-flex">
+                <div style="align-self: stretch; height: 213px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: flex">
+                    <div style="align-self: stretch; color: black; font-size: 48px; font-family: Roboto; font-weight: 700; line-height: 57.60px; word-wrap: break-word">Reservas Descomplicadas: Guia do App</div>
+                    <div style="align-self: stretch; color: black; font-size: 18px; font-family: Roboto; font-weight: 400; line-height: 27px; word-wrap: break-word"></div>
+                </div>
+            </div>
+            <div style="flex: 1 1 0; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: inline-flex">
+                <div style="align-self: stretch; justify-content: flex-start; align-items: flex-start; gap: 40px; display: inline-flex">
+                    <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
+                        <div style="width: 48px; height: 48px; position: relative">
+                            <div style="width: 36px; height: 40px; left: 6px; top: 4px; position: absolute; background: black"></div>
+                        </div>
+                        <div style="width: 100px; height: 0px; transform: rotate(90deg); transform-origin: 0 0; border: 2px black solid"></div>
+                    </div>
+                    <div style="flex: 1 1 0; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
+                        <div style="align-self: stretch; color: black; font-size: 20px; font-family: Roboto; font-weight: 700; line-height: 28px; word-wrap: break-word">Envio de Solicitação</div>
+                        <div style="align-self: stretch; color: black; font-size: 16px; font-family: Roboto; font-weight: 400; line-height: 24px; word-wrap: break-word">Após escolher a sala desejada, selecione o horário disponível. Nosso pop-up intuitivo simplifica o processo, proporcionando facilidade e praticidade na realização do agendamento.</div>
+                    </div>
+                </div>
+                <div style="align-self: stretch; justify-content: flex-start; align-items: flex-start; gap: 40px; display: inline-flex">
+                    <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
+                        <div style="width: 48px; height: 48px; position: relative">
+                            <div style="width: 36px; height: 40px; left: 6px; top: 4px; position: absolute; background: black"></div>
+                        </div>
+                        <div style="width: 100px; height: 0px; transform: rotate(90deg); transform-origin: 0 0; border: 2px black solid"></div>
+                    </div>
+                    <div style="flex: 1 1 0; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
+                        <div style="align-self: stretch; color: black; font-size: 20px; font-family: Roboto; font-weight: 700; line-height: 28px; word-wrap: break-word">Acompanhamento da Reserva</div>
+                        <div style="align-self: stretch; color: black; font-size: 16px; font-family: Roboto; font-weight: 400; line-height: 24px; word-wrap: break-word">Confira o status das suas reservas em seu perfil. Mantemos você atualizado sobre suas solicitações, proporcionando uma maneira fácil e clara de visualizar o calendário.</div>
+                    </div>
+                </div>
+                <div style="align-self: stretch; justify-content: flex-start; align-items: flex-start; gap: 40px; display: inline-flex">
+                    <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
+                        <div style="width: 48px; height: 48px; position: relative">
+                            <div style="width: 36px; height: 40px; left: 6px; top: 4px; position: absolute; background: black"></div>
+                        </div>
+                        <div style="width: 100px; height: 0px; transform: rotate(90deg); transform-origin: 0 0; border: 2px black solid"></div>
+                    </div>
+                    <div style="flex: 1 1 0; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
+                        <div style="align-self: stretch; color: black; font-size: 20px; font-family: Roboto; font-weight: 700; line-height: 28px; word-wrap: break-word">Dúvidas Frequentes (FAQ)</div>
+                        <div style="align-self: stretch; color: black; font-size: 16px; font-family: Roboto; font-weight: 400; line-height: 24px; word-wrap: break-word">Acesse nossa seção de Perguntas Frequentes para obter respostas rápidas e claras. Encontre informações adicionais e esclareça qualquer dúvida que possa surgir durante o processo de reserva.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="relative bg-black text-white">
+        <div class="absolute w-full top-0 px-4 py-10">
+            <h2 class="text-6xl font-normal font-['Staatliches']">Selecione uma sala abaixo para solicitar um horário.</h2>
+        </div>
+        <div class="swiper mySwiper mt-64">
+            <div class="swiper-wrapper">
+                <!-- Repita este bloco para cada sala -->
+                <!-- {% for sala in list_salas %} -->
+                <div class="swiper-slide">
+                    <div class="text-center">
+                        <div class="text-3xl font-semibold font-['Nunito'] mb-4">{{ sala.name }}</div>
+                        <img class="mx-auto rounded-[32px]" src="{{ sala.thumb.url }}" alt="{{ sala.name }}" />
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="text-center">
+                        <div class="text-3xl font-semibold font-['Nunito'] mb-4">{{ sala.name }}</div>
+                        <img class="mx-auto rounded-[32px]" src="{{ sala.thumb.url }}" alt="{{ sala.name }}" />
+                    </div>
+                </div>
+                <!-- {% endfor %} -->
+                <!-- Fim do bloco de sala -->
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper('.mySwiper', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+    </script>
+
+
+<!-- <div style="width: 100%; height: 100%; position: relative">
+
+    <div style="width: 100%; height: 811px; left: 1px; top: 0px; position: absolute; background: black"></div>
+    <div style="width: 720px; height: 250px; left: 0px; top: 0px; position: absolute; color: white; font-size: 60px; font-family: Staatliches; font-weight: 400; line-height: 52.20px; word-wrap: break-word">Selecione uma sala<br/>abaixo para solicitar<br/>um horário.</div>
+    <div style="width: 100%; height: 537px; padding: 56px; left: 0px; top: 250px; position: absolute; border-radius: 32px; justify-content: flex-start; align-items: flex-start; gap: 56px; display: inline-flex">
+    {% for sala in list_salas %}
+    <a href="{% url 'home:popup' sala.pk%}">>
+        <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
+            <div style="width: 376px; height: 44px; color: white; font-size: 30px; font-family: Nunito; font-weight: 600; word-wrap: break-word">{{ sala.name }}</div>
+            <div style="width: 376px; background: white; border-radius: 32px; overflow: hidden; justify-content: center; align-items: center; display: inline-flex">
+                <div style="flex: 1 1 0; height: 346px; border-radius: 32px; justify-content: center; align-items: center; display: inline-flex">
+                    <img style="width: 376px;height: 100%; border-radius: 32px" src="{{ sala.thumb.url }}" />
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    </div>
+</div>
+
+</div>-->
+{% endblock content %}

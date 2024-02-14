@@ -1,0 +1,55 @@
+<nav class="w-full flex justify-between items-center py-3 py-4 fixed z-50 bg-black text-white">
+  <!-- Botão do menu para telas pequenas -->
+  <button class="md:hidden text-white py-2 px-4" id="navbarToggle">
+    ☰
+  </button>
+
+  <div class="w-full md:w-auto md:flex flex flex-nowrap hidden" id="navbarLinks">
+    <div class="mr-2">
+      <a href="/">
+        <button class="text-white py-1 px-3">
+          Home
+        </button>
+      </a>
+    </div>
+    <div class="mr-2">
+      <a href="/">
+        <button class="text-white py-1 px-3">
+          Perfil
+        </button>
+      </a>
+    </div>
+    <div class="mr-2">
+      <a href="{% url 'index' %}">
+        <button class="text-white py-1 px-3">
+          Calendario
+        </button>
+      </a>
+    </div>
+    <!-- Adicione os outros links aqui -->
+  </div>
+
+  <div class="w-full md:w-auto md:flex flex-nowrap justify-end hidden" id="navbarLinksRight">
+    <div class="mr-2">
+      <a href="">
+        <button class="text-white py-1 px-3">
+          Log Out
+        </button>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.getElementById('navbarToggle').addEventListener('click', function() {
+    var links = document.getElementById('navbarLinks');
+    var linksRight = document.getElementById('navbarLinksRight');
+    if (links.classList.contains('hidden')) {
+      links.classList.remove('hidden');
+      linksRight.classList.remove('hidden');
+    } else {
+      links.classList.add('hidden');
+      linksRight.classList.add('hidden');
+    }
+  });
+</script>

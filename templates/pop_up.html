@@ -1,0 +1,10 @@
+{% block content %}
+
+<p>
+    {{ object.name }}
+</p> 
+{% for hr in horarios_rl %}
+    <p>{{ hr.horario_inicio }}-{{ hr.horario_fim }}</p>
+    <p></p>
+{% endfor %}
+{% endblock content %} 

@@ -1,0 +1,38 @@
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Ajusta a altura da seção para cobrir a tela inteira */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Garante que o vídeo não exceda a seção */
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1; /* Posiciona o vídeo atrás do texto */
+}
+
+.hero-content h2.subtitle, .hero-content h1.title {
+    color: white;
+    text-align: center;
+    z-index: 1; /* Garante que o texto fique sobre o vídeo */
+}
+
+/* Estilos responsivos para o texto */
+@media (max-width: 768px) {
+    .hero-content h2.subtitle {
+        font-size: 2rem; /* Tamanho menor para telas menores */
+    }
+
+    .hero-content h1.title {
+        font-size: 5rem; /* Ajuste conforme necessário para visibilidade */
+    }
+}
