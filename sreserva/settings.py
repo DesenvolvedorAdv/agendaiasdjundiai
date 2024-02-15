@@ -11,15 +11,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xrcxi=xq%7&hho5=r^jo4uf1opszn3^6-fe5awhd0rnc)wfdi7'
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = 'django-insecure-xrcxi=xq%7&hho5=r^jo4uf1opszn3^6-fe5awhd0rnc)wfdi7'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = os.environ.get("DEBUG","False").lower() == "true"
+# DEBUG = True
+DEBUG = os.environ.get("DEBUG","False").lower() == "true"
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -95,9 +95,9 @@ DATABASES = {
         'PORT': '3306'
     }
 }
-# database_url = os.environ.get("DATABASE_URL")
-# DATABASES['default'] = dj_database_url.parse(database_url)
-DATABASES['default'] = dj_database_url.parse("postgres://database_agenda_iasd_user:BYgRPacYnCVB3SlTEjSQxv3r824DgqzU@dpg-cn3mqp7qd2ns73eihk1g-a.oregon-postgres.render.com/database_agenda_iasd")
+database_url = os.environ.get("DATABASE_URL")
+DATABASES['default'] = dj_database_url.parse(database_url)
+# DATABASES['default'] = dj_database_url.parse("postgres://database_agenda_iasd_user:BYgRPacYnCVB3SlTEjSQxv3r824DgqzU@dpg-cn3mqp7qd2ns73eihk1g-a.oregon-postgres.render.com/database_agenda_iasd")
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
