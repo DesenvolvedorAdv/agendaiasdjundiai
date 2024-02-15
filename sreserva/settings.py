@@ -2,6 +2,7 @@ import dj_database_url
 from pathlib import Path
 import os
 
+# export PATH=$PATH:/usr/local/python3/bin && pip install gunicorn && gunicorn sreserva:app
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
