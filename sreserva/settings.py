@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'home',
     'cal',
+    'crispy_forms',
+    'crispy_bootstrap5',
     #providers
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.microsoft'
@@ -102,7 +104,7 @@ AUTHENTICATION_BACKENDS = [
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
+# AUTH_USER_MODEL = "cal.Usuario" #Conferir se vai manter no django all auth
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -134,13 +136,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 
 MEDIA_URL = 'media/'
 
@@ -150,3 +152,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRISPY_TEMPLATE_PACK = 'tailwind'
+
+# CRISPY_ALLOWED_TEMPLATE_PACKS = "boostrap5"
+
+# CRISPY_TEMPLATE_PACKS = "boostrap5"

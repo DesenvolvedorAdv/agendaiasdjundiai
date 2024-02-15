@@ -32,7 +32,8 @@ class detalhe_sala(LoginRequiredMixin,DetailView):#pop-up
         context['horarios_rl'] = horarios_rl
         return context
 
-
+class Paginaperfil(LoginRequiredMixin, TemplateView):
+    template_name = "editarperfil.html"
     # def your_view(self):
     #     events = Events.objects.all()
     #     event_data = [
