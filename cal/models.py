@@ -20,4 +20,3 @@ class Evento(models.Model):
     cor = models.CharField(max_length=7, null=True, blank=True)
     class Meta:
         db_table = "tblevento"
-
