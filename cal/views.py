@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse 
 from .models import Evento
 import datetime
+import pytz
 
 # Create your views here.
 def index(request):  
@@ -16,16 +17,27 @@ def all_events(request):
     all_events = Evento.objects.all()
     events_list = []
     
+    # Definindo o fuso horário desejado
+    tz = pytz.timezone('America/Sao_Paulo')
+    
     for event in all_events:
+        # Converte as datas para o fuso horário desejado antes de formatar
+        start_local = event.start.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+        end_local = event.end.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
         events_list.append({
             'id': event.id,
             'title': event.name,
-            'start': event.start.strftime("%Y-%m-%dT%H:%M:%S"),
-            'end': event.end.strftime("%Y-%m-%dT%H:%M:%S"),
+            'start': start_local,
+            'end': end_local,
             'backgroundColor': event.cor,  # Se você quer usar o campo 'cor' para definir a cor do evento no calendário
         })
     
     return JsonResponse(events_list, safe=False)
+
+
+            # 'start': event.start.strftime("%Y-%m-%dT%H:%M:%S"),
+            # 'end': event.end.strftime("%Y-%m-%dT%H:%M:%S"),
+
     # all_events = Evento.objects.all()
     # out = []                                                                                                             
     # for event in all_events:                                                                                             
