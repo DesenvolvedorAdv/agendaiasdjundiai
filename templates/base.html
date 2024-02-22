@@ -12,9 +12,13 @@
             margin-top: 5rem; /* Ajuste conforme necessário */
         }
 
-    </style>  
+    </style>
+    {% block head %}
+    {% endblock head %}    
 </head>
 <body>
+{% block content0 %}
+{% endblock content0 %}
 {% include 'navbar.html' %}
 {% block content %}
 {% endblock content %}

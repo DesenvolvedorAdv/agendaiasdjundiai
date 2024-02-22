@@ -1,10 +1,486 @@
-{% block content %}
+{% block head %}
+<!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Incluindo o tema dark -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Script de localização para português -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
-<p>
-    {{ object.name }}
-</p> 
-{% for hr in horarios_rl %}
-    <p>{{ hr.horario_inicio }}-{{ hr.horario_fim }}</p>
-    <p></p>
-{% endfor %}
-{% endblock content %} 
+<style>
+    /* Estilos do Modal */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 50; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        display: flex; /* Usando flex para centralizar */
+        align-items: center; /* Alinha verticalmente */
+        justify-content: center; /* Alinha horizontalmente */
+    }
+
+    .modal-content {
+        background-color: #1F1F1F; /* Cor de fundo */
+        padding: 16px;
+        border: 1px solid #888;
+        width: 1040px; /* Largura específica */
+        height: auto; /* Altura específica */
+        border-radius: 6px;
+        /* Posição horizontal específica */
+        /* Removido margin: auto; usado para centralização */
+        position: relative; /* Necessário para aplicar 'left' e 'top' */
+        /* left: 280px; Posição da esquerda */
+        /* transform: translateY(-50%); Centraliza verticalmente */
+        /* top: 50%; Junto com transform, centraliza verticalmente */
+    }
+
+    /* The Close Button */
+    .close {
+        position: absolute; /* Posição absoluta em relação ao .modal-content */
+        top: 10px; /* Espaçamento do topo */
+        right: 20px; /* Espaçamento da direita */
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+    }
+    /* Customização do fundo do Flatpickr */
+    .flatpickr-calendar {
+        background: #1F1F1F; /* Altere para a cor de fundo desejada */
+        border-radius: 6px !important;
+        width: 100%; /* Exemplo de largura; ajuste conforme necessário */
+    }
+    .flatpickr-calendar .flatpickr-weekdays,
+    .flatpickr-calendar .flatpickr-weekday,
+    .flatpickr-calendar .flatpickr-days,
+    .flatpickr-calendar .dayContainer {
+        width: 100% !important /* Certifica com o que você como gosta */
+    }
+
+    .flatpickr-calendar .flatpickr-months .flatpickr-month {
+        width: calc(100% - 40px) !important /* Ajusta recitante a interna a de a de vaga a preso a */
+    }
+    /* Se quiser alterar o fundo dos dias da semana */
+    .flatpickr-weekdays {
+        background: #1F1F1F; /* Cor de fundo mais escura para os dias da semana */
+    }
+    .flatpickr-weekday {
+        background: #1F1F1F !important /* Cor de fundo mais escura para os dias da semana */
+    }
+    .flatpickr-monthDropdown-months {
+        background: #1F1F1F !important /* Cor de fundo mais escura para os dias da semana */
+    }
+    .flatpickr-monthDropdown-month {
+        background: #1F1F1F !important /* Cor de fundo mais escura para os dias da semana */
+    }
+    /* Para alterar o fundo dos dias no calendário */
+    .flatpickr-day {
+        background: #404040; /* Fundo dos dias no calendário */
+        border-color: transparent; /* Remove a borda padrão dos dias */
+        border-radius: 6px !important;
+        width: calc(14.28% - 2px); /* Configura a largura para 1/7 do container, assumindo a margem */
+        min-width: calc(14.28% - 2px); /* Uso de calculo baseado em % para divisões precisas por 7 */
+        max-width: calc(14.28% - 2px); /* O mesmo que acima */
+    }
+    .flatpickr-day:hover {
+        background: #555555; /* Cor de fundo ao passar o mouse */
+    }
+    .flatpickr-calendar .flatpickr-day.selected, 
+    .flatpickr-calendar .flatpickr-day.startRange, 
+    .flatpickr-calendar .flatpickr-day.endRange {
+        background: #ffffff !important; /* Nova cor de fundo */
+        border-radius: 6px !important; /* Quadrado */
+    }
+
+    /* Cor do texto do dia selecionado */
+    .flatpickr-calendar .flatpickr-day.selected, 
+    .flatpickr-calendar .flatpickr-day.startRange, 
+    .flatpickr-calendar .flatpickr-day.endRange {
+        color: #000000 !important; /* Nova cor do texto */
+    }
+
+    .flatpickr-calendar .flatpickr-months .flatpickr-month {
+        background: #1F1F1F; /* Nova cor de fundo */
+        color: #ffffff; /* Cor do texto */
+    }
+    .flatpickr-monthDropdown-months {
+    background: #1F1F1F;
+    }
+    /* Cor do texto do input (DD/MM/YYYY) */
+    input[type="text"].flatpickr-input {
+        color: #cccccc; /* Cor do texto */
+    }
+    .flatpickr-calendar .flatpickr-days .flatpickr-day {
+    margin: 1px; /* Ajuste o valor de acordo com a necessidade */
+    width: 32px; /* Ajusta a largura dos dias */
+    height: 46px; /* Ajusta a altura dos dias */
+    line-height: 46px; /* Ajusta a altura da linha para centralizar o texto verticalmente */
+    }
+    .flatpickr-days, .dayContainer {
+        width: 100%; /* Presiva e estando o a termino o versionar */
+    }
+    .dayContainer {
+        min-width: 100%;
+        max-width: 100%;
+    } 
+
+</style>
+
+{% endblock head %}
+
+{% block content0 %}
+
+<!--md:max-w-xl-->
+<div id="modal" class="modal hidden">
+    <div class="modal-content", style="background: #1F1F1F">
+        <div class="grid grid-cols-3 gap-4 p-4" style="display: grid; grid-template-columns: 30% 35% 35%;">
+        <!-- Coluna 1: Nome da Sala e Outros Detalhes -->
+        <div id="roomName" style="color: #ffffff; font-family: Roboto; font-size: 24px; font-style: normal; font-weight: 600; position: absolute; top: 16px;left: 24px;"></div>
+        <div id="roomDetails" class="text-white  flex-col justify-between" style="width: 100%; height: 100%; padding: 16px;">
+            <!-- <p>Selecione um dia e horário</p> -->
+            <div class="flex flex-col justify-center items-center" style="flex-grow: 1;">
+                <h2 style="color: #ffffff; margin-bottom: 8px;">Nome do evento</h2>
+                <input class="bg-[#1F1F1F] border border-color-[#aaa] p-1" type="text" placeholder="Evento" style="width: 100%">
+            </div>
+            <!-- <input calss="text-white" type="text" placeholder="Evento", style="background:#1F1F1F; border-color:#aaa"> -->
+        </div>
+  
+        <!-- Coluna 2: Input Date -->
+        <div class="flex flex-col justify-center items-center border-l border-neutral-700"  style="width: 106%; padding: 16px;">
+            <input type="text" id="datePicker" placeholder="Selecione uma data" class="text-white bg-[#1F1F1F]" style="color: #ffffff;margin: auto">
+        </div>
+  
+        <!-- Coluna 3: Botão Fechar e Outros Botões -->
+        <div class="flex flex-col text-white items-center justify-between border-l border-neutral-700" style="width: 100%;">
+          <span class="close cursor-pointer font-bold self-end">&times;</span>
+          <div>
+            <div class="flex flex-col justify-center items-center" style="flex-grow: 1;">
+                <div id="availableTimes">
+                    <!-- <h2 style="color: #ffffff; margin-bottom: 8px;">Horários Disponíveis</h2>
+                    {% for horario in horarios_disponiveis %}
+                    <button class="whitespace-nowrap items-center text-sm font-medium relative rounded-md transition disabled:cursor-not-allowed text-emphasis border border-default bg-default hover:bg-muted focus-visible:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-empthasis disabled:border-subtle disabled:bg-opacity-30 disabled:text-muted disabled:hover:bg-opacity-30 disabled:hover:text-muted disabled:hover:border-subtle disabled:hover:bg-default px-4 min-h-9 hover:border-brand-default mb-2 flex h-auto w-full flex-grow flex-col justify-center py-2" type="button">
+                        <div class="flex items-center gap-2">{{ horario.inicio }}h - {{ horario.fim }}h</div></button>
+                    </div>
+                    <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                        <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
+                          <p>{{ horario.inicio }}h - {{ horario.fim }}h</p>
+                        </div> -->
+                    <!-- <div>
+                        {{ horario.nome }}: {{ horario.inicio }} - {{ horario.fim }} -->
+                    <!-- </div>
+                    {% endfor %} -->
+                </div>
+            </div>
+            <!-- <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
+                  <p>{{ hr.horario_inicio }}h - {{ hr.horario_fim }}h</p>
+                </div> -->
+            <!-- {% for hr in horarios_rl %}
+              <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
+                    <div id="availableTimes" class="w-full"></div>
+                    <button type="button">{{ hr.horario_inicio }}h - {{ hr.horario_fim }}h</button>
+                </div>
+              </div>
+            {% endfor %}  -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Estrutura do Modal -->
+<!-- <div id="modal" class="hidden fixed z-50 left-0 top-0 w-full h-full overflow-auto bg-black bg-opacity-50">
+  <div class="modal-content p-5 rounded-lg m-4 md:mx-auto"
+    <span class="close cursor-pointer float-right font-bold">&times;</span>
+    <div id="modal-content" class="mt-4">
+      <p>Insira suas informações aqui:</p>
+      <div><input type="date" placeholder="DD/MM/YYYY"></div>
+      <input type="text" placeholder="Seu nome">
+      <button>Enviar</button>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal');
+    const closeModal = modal.querySelector('.close');
+
+    document.querySelectorAll('[data-modal-open]').forEach(item => {
+        item.addEventListener('click', function() {
+            const salaId = this.getAttribute('data-room-id');
+            const salaName = this.getAttribute('data-room-name');
+            modal.style.display = 'flex';
+            // Atualiza o nome da sala no modal corretamente
+            document.getElementById('roomName').innerHTML = `<h1>${salaName}</h1>`;
+
+            // Corrigindo a posição onde o salaId é definido
+            modal.setAttribute('data-current-sala-id', salaId);
+        });
+    });
+
+    // Configuração do Flatpickr
+    flatpickr("#datePicker", {
+        inline: true,
+        locale: "pt",
+        onChange: function(selectedDates) {
+            const salaId = modal.getAttribute('data-current-sala-id');
+            const data = selectedDates[0].toISOString().slice(0, 10); // Formato 'YYYY-MM-DD'
+            fetch(`/verificar-disponibilidade/${salaId}/${data}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const horariosDisponiveis = data.horarios_disponiveis;
+                    const availableTimesElement = document.getElementById('availableTimes');
+                    availableTimesElement.innerHTML = ''; // Limpa antes de adicionar novos horários
+                    horariosDisponiveis.forEach(horario => {
+                        const timeSlot = document.createElement('div');
+                        timeSlot.innerHTML = `<button type="button">${horario.nome}: ${horario.inicio} - ${horario.fim}</button>`;
+                        availableTimesElement.appendChild(timeSlot);
+                    });
+                });
+            },
+        });
+
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const datePicker = flatpickr("#datePicker", {
+            inline: true,
+            locale: "pt",
+            onChange: function(selectedDates) {
+                const salaId = document.getElementById('modal').getAttribute('data-current-sala-id');
+                if (!salaId || selectedDates.length === 0) return;
+                const dataSelecionada = selectedDates[0].toISOString().slice(0, 10); // Formato 'YYYY-MM-DD'
+                buscarHorariosDisponiveis(salaId, dataSelecionada);
+            },
+        });
+    });
+
+    function buscarHorariosDisponiveis(salaId, data) {
+        fetch(`/verificar-disponibilidade/${salaId}/${data}/`)
+            .then(response => response.json())
+            .then(data => {
+                const horariosDisponiveis = data.horarios_disponiveis;
+                const availableTimesElement = document.getElementById('availableTimes');
+                availableTimesElement.innerHTML = ''; // Limpa antes de adicionar novos horários
+                horariosDisponiveis.forEach(horario => {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.innerHTML = `<button type="button">${horario.nome}: ${horario.inicio} - ${horario.fim}</button>`;
+                    availableTimesElement.appendChild(timeSlot);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar horários disponíveis:', error));
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="w-[1040px] h-[462px] relative bg-stone-900 rounded-md border border-neutral-700">
+  <div class="w-[480px] h-[460px] left-[280px] top-[1px] absolute border-l border-neutral-700">
+  <p>
+      {{ object.name }}
+  </p> 
+  {% for hr in horarios_rl %}
+      <p>{{ hr.horario_inicio }}-{{ hr.horario_fim }}</p>
+      <p></p>
+  {% endfor %}
+  </div>
+</div> -->
+<!-- <div style="width: 100%; height: 100%; position: relative; background: #1F1F1F; border-radius: 6px; border: 1px #383838 solid">
+  <div style="width: 480px; height: 460px; left: 280px; top: 1px; position: absolute; border-left: 1px #383838 solid">
+      <div style="width: 141px; height: 20px; left: 21px; top: 20px; position: absolute">
+        <span style="color: #FCFCFD; font-size: 16px; font-family: Inter; font-weight: 600; line-height: 24px; word-wrap: break-word">Fevereiro</span>
+        <span style="color: #D6D6D6; font-size: 16px; font-family: Inter; font-weight: 400; line-height: 24px; word-wrap: break-word"> </span>
+        <span style="color: #A6A6A6; font-size: 16px; font-family: Inter; font-weight: 500; line-height: 24px; word-wrap: break-word">2024</span>
+      </div>
+      <div style="width: 16px; height: 16px; left: 398px; top: 22px; position: absolute; opacity: 0.70">
+          <div style="width: 4px; height: 8px; left: 6px; top: 4px; position: absolute; border: 1.33px #FCFCFD solid"></div>
+      </div>
+      <div style="width: 16px; height: 16px; left: 434px; top: 22px; position: absolute; opacity: 0.70">
+          <div style="width: 4px; height: 8px; left: 6px; top: 4px; position: absolute; border: 1.33px #FCFCFD solid"></div>
+      </div>
+      <div style="width: 32px; height: 16px; left: 30.92px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">DOM</div>
+      <div style="width: 32.96px; height: 16px; left: 94.22px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">seg</div>
+      <div style="width: 27.87px; height: 16px; left: 161.75px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">ter</div>
+      <div style="width: 31.62px; height: 16px; left: 224.88px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">qua</div>
+      <div style="width: 29.55px; height: 16px; left: 290.91px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">qui</div>
+      <div style="width: 37px; height: 16px; left: 348px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">SEX</div>
+      <div style="width: 26.80px; height: 16px; left: 422.28px; top: 68px; position: absolute; text-align: center; color: #FCFCFD; font-size: 12px; font-family: Inter; font-weight: 500; text-transform: uppercase; line-height: 16px; letter-spacing: 1.20px; word-wrap: break-word">SaB</div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 274.14px; top: 100px; position: absolute; background: #FAFAFA; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 6.97px; height: 17px; text-align: center; color: black; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">1</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 337.42px; top: 100px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 8.98px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">2</div>
+      </div>
+      <div style="width: 9.21px; height: 17px; left: 425.94px; top: 120.64px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">3</div>
+      <div style="width: 9.17px; height: 17px; left: 46.25px; top: 183.94px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">4</div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 84.28px; top: 163.30px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 9.08px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">5</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 147.56px; top: 163.30px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 9.31px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">6</div>
+      </div>
+      <div style="width: 59.30px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 210.84px; top: 163.30px; position: absolute; background: #404040; border-radius: 6px; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 8.49px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">7</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 274.14px; top: 163.30px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 9.24px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">8</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 337.42px; top: 163.30px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 9.31px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">9</div>
+      </div>
+      <div style="width: 15.21px; height: 17px; left: 422.92px; top: 183.94px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">10</div>
+      <div style="width: 12.82px; height: 17px; left: 44.39px; top: 247.23px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">11</div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 84.28px; top: 226.59px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 15.58px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">12</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 147.56px; top: 226.59px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 16.02px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">13</div>
+      </div>
+      <div style="width: 59.30px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 210.84px; top: 226.59px; position: absolute; background: #404040; border-radius: 6px; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 16.16px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">14</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 274.14px; top: 226.59px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 15.69px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">15</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 337.42px; top: 226.59px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 15.91px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">16</div>
+      </div>
+      <div style="width: 14.49px; height: 17px; left: 423.28px; top: 247.23px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">17</div>
+      <div style="width: 15.18px; height: 17px; left: 43.23px; top: 310.53px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">18</div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 84.28px; top: 289.89px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 15.91px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">19</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; padding-left: 20.82px; padding-right: 20.52px; left: 147.56px; top: 289.89px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.94px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">20</div>
+      </div>
+      <div style="width: 59.30px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 210.84px; top: 289.89px; position: absolute; background: #404040; border-radius: 6px; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 15.58px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">21</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 274.14px; top: 289.89px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.47px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">22</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; padding-left: 20.83px; padding-right: 20.54px; left: 337.42px; top: 289.89px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.91px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">23</div>
+      </div>
+      <div style="width: 17.41px; height: 17px; left: 421.80px; top: 310.53px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">24</div>
+      <div style="width: 17.29px; height: 17px; left: 42.19px; top: 373.83px; position: absolute; text-align: center; color: #575757; font-size: 14px; font-family: Inter; font-weight: 300; line-height: 20px; word-wrap: break-word">25</div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; padding-left: 20.89px; padding-right: 20.59px; left: 84.28px; top: 353.19px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.80px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">26</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; left: 147.56px; top: 353.19px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.10px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">27</div>
+      </div>
+      <div style="width: 59.30px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; padding-left: 20.93px; padding-right: 20.63px; left: 210.84px; top: 353.19px; position: absolute; background: #404040; border-radius: 6px; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.74px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">28</div>
+      </div>
+      <div style="width: 59.28px; height: 59.30px; padding-top: 20.64px; padding-bottom: 21.66px; padding-left: 20.89px; padding-right: 20.59px; left: 274.14px; top: 353.19px; position: absolute; background: #404040; border-radius: 6px; flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
+          <div style="width: 17.80px; height: 17px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">29</div>
+      </div>
+  </div>
+  <div style="height: 460px; padding-top: 12px; padding-left: 21px; padding-right: 20px; left: 760px; top: 1px; position: absolute; border-left: 1px #383838 solid; flex-direction: column; justify-content: flex-end; align-items: flex-start; display: inline-flex">
+      <div style="align-self: stretch; height: 48px; padding-bottom: 12px; justify-content: center; align-items: center; display: inline-flex">
+          <div style="flex: 1 1 0; align-self: stretch; background: #1F1F1F; justify-content: center; align-items: center; gap: 75.63px; display: inline-flex">
+              <div style="width: 53.78px; align-self: stretch; padding-top: 2px; padding-bottom: 2px; padding-right: 3.62px; justify-content: center; align-items: flex-end; gap: 3.62px; display: inline-flex">
+                  <div style="width: 30.49px; height: 20px; color: #FCFCFD; font-size: 16px; font-family: Inter; font-weight: 600; line-height: 24px; word-wrap: break-word">QUI</div>
+                  <div style="width: 16.05px; height: 17px; color: #D6D6D6; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">01</div>
+              </div>
+              <div style="flex: 1 1 0; height: 36px; padding: 5px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: flex-start; gap: 2px; display: inline-flex">
+                  <div style="flex: 1 1 0; align-self: stretch; padding-top: 4.25px; padding-bottom: 4.25px; padding-left: 12px; padding-right: 11.64px; border-radius: 4px; justify-content: center; align-items: center; display: inline-flex">
+                      <div style="width: 26.31px; height: 17.50px; text-align: center; color: #D6D6D6; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 17.50px; word-wrap: break-word">X</div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div style="align-self: stretch; height: 400px; flex-direction: column; justify-content: flex-end; align-items: center; display: inline-flex">
+          <div style="align-self: stretch; height: 752px; padding-bottom: 24px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
+            {% for hr in horarios_rl %}
+              <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
+                  <p>{{ hr.horario_inicio }}h - {{ hr.horario_fim }}h</p>
+                </div>
+              </div>
+            {% endfor %}
+              </div>
+              <div style="align-self: stretch; height: 38px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                  <div style="width: 58.63px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">12:30pm</div>
+              </div>
+              <div style="align-self: stretch; height: 38px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                  <div style="width: 50.04px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">1:00pm</div>
+              </div>
+              <div style="align-self: stretch; height: 38px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                  <div style="width: 50.01px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">1:30pm</div>
+              </div>
+              <div style="align-self: stretch; height: 38px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
+                  <div style="width: 52.02px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">2:00pm</div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div style="width: 280px; height: 358px; left: 1px; top: 1px; position: absolute">
+      <div style="width: 229.98px; height: 52px; left: 24px; top: 26px; position: absolute; color: #D6D6D6; font-size: 20px; font-family: Inter; font-weight: 600; line-height: 28px; word-wrap: break-word">Sala dos Jovens</div>
+      <div style="width: 232px; height: 60px; left: 24px; top: 148px; position: absolute"></div>
+      <div style="width: 208.79px; height: 57px; left: 24px; top: 78px; position: absolute; color: #D6D6D6; font-size: 14px; font-family: Inter; font-weight: 400; line-height: 20px; word-wrap: break-word">Selecione um dia e horário para<br/>finalizar a reserva.</div>
+  </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const openModalBtn = document.getElementById('openModalBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalBackdrop = document.getElementById('modalBackdrop');
+  
+      // Abrir modal
+      openModalBtn.addEventListener('click', function () {
+        modalBackdrop.classList.remove('hidden');
+      });
+  
+      // Fechar modal
+      closeModalBtn.addEventListener('click', function () {
+        modalBackdrop.classList.add('hidden');
+      });
+  
+      // Fechar modal ao clicar no backdrop
+      modalBackdrop.addEventListener('click', function (e) {
+        if (e.target === modalBackdrop) {
+          modalBackdrop.classList.add('hidden');
+        }
+      });
+    });
+</script> -->
+{% endblock %}

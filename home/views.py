@@ -1,8 +1,12 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Events, Sala
 from django.views.generic import TemplateView, DetailView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Sala
+from cal.models import Evento
+import datetime
+
 # from django.http import HttpResponseRedirect
 # from django.urls import reverse_lazy, reverse
 # Create your views here.
@@ -20,18 +24,72 @@ class Homepage(LoginRequiredMixin,TemplateView):
         context['list_salas'] = Sala.objects.all()  # Obter todas as salas
         return context
 
-class detalhe_sala(LoginRequiredMixin,DetailView):#pop-up
+
+# class detalhe_sala(LoginRequiredMixin,DetailView):#pop-up
+#     model = Sala
+#     template_name = "pop_up.html"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # self.get_object()
+#         sala = self.get_object()
+#         horarios_rl = sala.horarios.all()
+#         context['horarios_rl'] = horarios_rl
+#         return context
+class detalhe_sala(LoginRequiredMixin, DetailView):
     model = Sala
     template_name = "pop_up.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # self.get_object()
         sala = self.get_object()
         horarios_rl = sala.horarios.all()
         context['horarios_rl'] = horarios_rl
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.is_ajax():
+            sala = self.get_object()
+            horarios_rl = list(sala.horarios.all().values('name', 'horario_inicio', 'horario_fim'))
+            return JsonResponse({'room_name': sala.name, 'horarios_rl': horarios_rl})
+        else:
+            return super().render_to_response(context, **response_kwargs)
+
+# class VerificarDisponibilidadeView(View):
+#     def get(self, request, sala_id, data):
+#         sala = get_object_or_404(Sala, pk=sala_id)
+#         data_parsed = datetime.datetime.strptime(data, '%Y-%m-%d').date()
+#         eventos = Evento.objects.filter(sala=sala, start__date=data_parsed)
+#         horarios_ocupados = eventos.values_list('start', 'end')
+
+#         horarios = [{'start': horario[0].strftime('%H:%M'), 'end': horario[1].strftime('%H:%M')} for horario in horarios_ocupados]
+
+#         return JsonResponse({'horarios': horarios})
+
+class VerificarDisponibilidadeView(View):
+    def get(self, request, sala_id, data):
+        sala = get_object_or_404(Sala, pk=sala_id)
+        data_parsed = datetime.datetime.strptime(data, '%Y-%m-%d').date()
+        
+        horarios_definidos = sala.horarios.all()
+        eventos_agendados = Evento.objects.filter(sala=sala, start__date=data_parsed)
+
+        horarios_disponiveis = []
+        for horario in horarios_definidos:
+            ocupado = False
+            for evento in eventos_agendados:
+                if horario.horario_inicio < evento.end.time() and horario.horario_fim > evento.start.time():
+                    ocupado = True
+                    break
+            if not ocupado:
+                horarios_disponiveis.append({
+                    'nome': horario.name,
+                    'inicio': horario.horario_inicio.strftime('%H:%M'),
+                    'fim': horario.horario_fim.strftime('%H:%M')
+                })
+
+        return JsonResponse({'horarios_disponiveis': horarios_disponiveis})
+    
 class Paginaperfil(LoginRequiredMixin, TemplateView):
     template_name = "editarperfil.html"
     # def your_view(self):

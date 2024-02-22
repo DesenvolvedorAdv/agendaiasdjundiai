@@ -1,9 +1,12 @@
 # from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from django.http import JsonResponse 
+from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Evento
+from home.models import Sala
 import datetime
 import pytz
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def index(request):  
@@ -49,15 +52,42 @@ def all_events(request):
     #     })                                                                                                               
                                                                                                                       
     # return JsonResponse(out, safe=False) 
- 
+@csrf_exempt
 def add_event(request):
-    start = request.GET.get("start", None)
-    end = request.GET.get("end", None)
-    title = request.GET.get("title", None)
-    event = Evento(name=str(title), start=start, end=end)
-    event.save()
-    data = {}
-    return JsonResponse(data)
+    # Aqui assumimos que os dados vêm via POST para melhor prática
+    if request.method == "POST":
+        start = request.POST.get("start")
+        end = request.POST.get("end")
+        title = request.POST.get("title")
+        sala_id = request.POST.get("sala_id")  # ID da Sala vem do carrossel
+
+        # Converte as strings de data e hora para objetos datetime
+        start_dt = parse_datetime(start)
+        end_dt = parse_datetime(end)
+
+        if None in (start, end, title, sala_id):
+            return HttpResponseBadRequest("Todos os campos são obrigatórios.")
+
+        try:
+            sala = Sala.objects.get(pk=sala_id)
+        except Sala.DoesNotExist:
+            return HttpResponseBadRequest("Sala não encontrada.")
+
+        event = Evento(name=title, start=start_dt, end=end_dt, cor=sala.cor)
+        event.save()
+        event.sala.add(sala)  # Associa a sala ao evento
+
+        return JsonResponse({'status': 'success', 'event_id': event.id})
+    else:
+        return HttpResponseBadRequest("Método não suportado.") 
+# def add_event(request):
+#     start = request.GET.get("start", None)
+#     end = request.GET.get("end", None)
+#     title = request.GET.get("title", None)
+#     event = Evento(name=str(title), start=start, end=end)
+#     event.save()
+#     data = {}
+#     return JsonResponse(data)
  
 def update(request):
     start = request.GET.get("start", None)
