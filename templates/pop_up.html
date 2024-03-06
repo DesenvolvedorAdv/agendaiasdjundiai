@@ -391,7 +391,7 @@
         const nomeEvento = document.getElementById('eventName').value;
         // Aqui, você irá enviar os dados para o Django via AJAX
         // Exemplo básico usando fetch:
-        fetch('{% url home:agendar_evento %}', {
+        fetch('/agendar-evento/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
