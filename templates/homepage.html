@@ -170,7 +170,38 @@
 
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let defaultTransform = 0;
+        const itemWidth = 398; // Largura aproximada de cada item, ajuste conforme necessário
+        const spacingBetweenItems = 14; // Espaço entre itens, ajuste conforme necessário
+        const numberOfVisibleItems = 3; // Quantos itens você deseja que sejam visíveis ao mesmo tempo
 
+        function goNext() {
+            const slider = document.getElementById("slider");
+            const maxTransform = -(slider.scrollWidth - numberOfVisibleItems * (itemWidth + spacingBetweenItems));
+            defaultTransform -= itemWidth + spacingBetweenItems; // Move um item por vez, incluindo o espaço entre eles
+            if (defaultTransform < maxTransform) {
+                defaultTransform = 0; // Reset se atingir o final
+            }
+            slider.style.transform = `translateX(${defaultTransform}px)`;
+        }
+
+        function goPrev() {
+            defaultTransform += itemWidth + spacingBetweenItems; // Move um item por vez, incluindo o espaço entre eles
+            if (defaultTransform > 0) {
+                defaultTransform = -(slider.scrollWidth - numberOfVisibleItems * (itemWidth + spacingBetweenItems));
+            }
+            slider.style.transform = `translateX(${defaultTransform}px)`;
+        }
+
+        const next = document.getElementById("next");
+        const prev = document.getElementById("prev");
+
+        next.addEventListener("click", goNext);
+        prev.addEventListener("click", goPrev);
+    });
+</script>
 <!-- <script>
     let defaultTransform = 0;
         function goNext() {

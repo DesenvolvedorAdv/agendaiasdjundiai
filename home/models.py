@@ -19,6 +19,7 @@ class Sala(models.Model):
     thumb = models.ImageField(upload_to='thumb_salas')
     tipo = models.CharField(max_length=15, null=True, blank=True, )
     horarios = models.ManyToManyField(Horario)
+    cor = models.CharField(max_length=7, null=True, blank=True)
     class Meta:
         db_table = "tblsala"
 

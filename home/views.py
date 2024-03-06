@@ -89,7 +89,32 @@ class VerificarDisponibilidadeView(View):
                 })
 
         return JsonResponse({'horarios_disponiveis': horarios_disponiveis})
-    
+
+class AgendarEventoView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        sala_id = data.get('sala_id')
+        data_evento = data.get('data')
+        inicio = data.get('inicio')
+        fim = data.get('fim')
+        nome_evento = data.get('name')
+
+        data_inicio = datetime.datetime.strptime(f'{data_evento} {inicio}', '%Y-%m-%d %H:%M')
+        data_fim = datetime.datetime.strptime(f'{data_evento} {fim}', '%Y-%m-%d %H:%M')
+        sala = get_object_or_404(Sala, pk=sala_id)
+
+        evento = Evento.objects.create(
+            usuario=request.user if request.user.is_authenticated else None,
+            name=nome_evento,
+            sala=sala,
+            start=data_inicio,
+            end=data_fim,
+            aprovada=False,
+            cor=sala.cor,
+        )
+
+        return JsonResponse({'status': 'success', 'evento_id': evento.id})#", home/urls.py = "app_name = 'home'
+
 class Paginaperfil(LoginRequiredMixin, TemplateView):
     template_name = "editarperfil.html"
     # def your_view(self):
