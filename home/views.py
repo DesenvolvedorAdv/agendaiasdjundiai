@@ -6,15 +6,9 @@ from django.db.models import Q
 from .models import Sala
 from cal.models import Evento
 import datetime
-
-# from django.http import HttpResponseRedirect
-# from django.urls import reverse_lazy, reverse
-# Create your views here.
-# def homepage(request):
-#     context = {}
-#     context['list_salas'] = Sala.objects.all()
-#     context['hor'] = {'pad':['','','',''],'fpad':['','']}
-#     return render(request, 'homepage.html', context)
+import logging
+import json
+logger = logging.getLogger(__name__)
 
 class Homepage(LoginRequiredMixin,TemplateView):
     template_name = "homepage.html"
@@ -25,17 +19,6 @@ class Homepage(LoginRequiredMixin,TemplateView):
         return context
 
 
-# class detalhe_sala(LoginRequiredMixin,DetailView):#pop-up
-#     model = Sala
-#     template_name = "pop_up.html"
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         # self.get_object()
-#         sala = self.get_object()
-#         horarios_rl = sala.horarios.all()
-#         context['horarios_rl'] = horarios_rl
-#         return context
 class detalhe_sala(LoginRequiredMixin, DetailView):
     model = Sala
     template_name = "pop_up.html"
@@ -54,17 +37,6 @@ class detalhe_sala(LoginRequiredMixin, DetailView):
             return JsonResponse({'room_name': sala.name, 'horarios_rl': horarios_rl})
         else:
             return super().render_to_response(context, **response_kwargs)
-
-# class VerificarDisponibilidadeView(View):
-#     def get(self, request, sala_id, data):
-#         sala = get_object_or_404(Sala, pk=sala_id)
-#         data_parsed = datetime.datetime.strptime(data, '%Y-%m-%d').date()
-#         eventos = Evento.objects.filter(sala=sala, start__date=data_parsed)
-#         horarios_ocupados = eventos.values_list('start', 'end')
-
-#         horarios = [{'start': horario[0].strftime('%H:%M'), 'end': horario[1].strftime('%H:%M')} for horario in horarios_ocupados]
-
-#         return JsonResponse({'horarios': horarios})
 
 class VerificarDisponibilidadeView(View):
     def get(self, request, sala_id, data):
@@ -92,28 +64,36 @@ class VerificarDisponibilidadeView(View):
 
 class AgendarEventoView(View):
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        sala_id = data.get('sala_id')
-        data_evento = data.get('data')
-        inicio = data.get('inicio')
-        fim = data.get('fim')
-        nome_evento = data.get('name')
+        try:
+            data = json.loads(request.body)
+            logger.debug("Dados recebidos para agendamento: %s", data)
 
-        data_inicio = datetime.datetime.strptime(f'{data_evento} {inicio}', '%Y-%m-%d %H:%M')
-        data_fim = datetime.datetime.strptime(f'{data_evento} {fim}', '%Y-%m-%d %H:%M')
-        sala = get_object_or_404(Sala, pk=sala_id)
+            sala_id = data.get('sala_id')
+            start = data.get('start')
+            end = data.get('end')
+            nome_evento = data.get('name')
 
-        evento = Evento.objects.create(
-            usuario=request.user if request.user.is_authenticated else None,
-            name=nome_evento,
-            sala=sala,
-            start=data_inicio,
-            end=data_fim,
-            aprovada=False,
-            cor=sala.cor,
-        )
+            # Verifique se os valores necessários são None antes de prosseguir
+            if not all([start, end, sala_id, nome_evento]):
+                logger.error("Um ou mais campos necessários estão faltando ou são None")
+                return JsonResponse({'status': 'error', 'message': 'Dados necessários para agendamento estão faltando'}, status=400)
 
-        return JsonResponse({'status': 'success', 'evento_id': evento.id})#", home/urls.py = "app_name = 'home'
+            sala = get_object_or_404(Sala, pk=sala_id)
+
+            evento = Evento.objects.create(
+                usuario=request.user if request.user.is_authenticated else None,
+                name=nome_evento,
+                sala=sala,
+                start=start,
+                end=end,
+                aprovada=False,
+                cor=sala.cor,
+            )
+
+            return JsonResponse({'status': 'success', 'evento_id': evento.id})#", home/urls.py = "app_name = 'home'
+        except Exception as e:
+            logger.error("Erro ao agendar evento: %s", e)
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 class Paginaperfil(LoginRequiredMixin, TemplateView):
     template_name = "editarperfil.html"
