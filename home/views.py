@@ -15,7 +15,7 @@ class Homepage(LoginRequiredMixin,TemplateView):
 #   all_events = #filter() order_by
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['list_salas'] = Sala.objects.all()  # Obter todas as salas
+        context['list_salas'] = Sala.objects.all().order_by('id')  # Obter todas as salas
         return context
 
 

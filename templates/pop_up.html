@@ -21,7 +21,6 @@
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        display: flex; /* Usando flex para centralizar */
         align-items: center; /* Alinha verticalmente */
         justify-content: center; /* Alinha horizontalmente */
     }
@@ -186,7 +185,7 @@
 {% block content0 %}
 
 <!--md:max-w-xl-->
-<div id="modal" class="modal hidden"><!-- data-agendar-evento-url="{% url 'home:agendar_evento' %}-->
+<div id="modal" class="modal hidden">
     <div class="modal-content", style="background: #1F1F1F">
         <div class="grid grid-cols-3 gap-4 p-4" style="display: grid; grid-template-columns: 30% 35% 35%;">
         <!-- Coluna 1: Nome da Sala e Outros Detalhes -->
@@ -196,9 +195,7 @@
             <div class="flex flex-col justify-center items-center" style="flex-grow: 1;">
                 <h2 style="color: #ffffff; margin-bottom: 8px;">Nome do evento</h2>
                 <input id="eventName" class="bg-[#1F1F1F] border border-color-[#aaa] p-1" placeholder="Nome do Evento" style="width: 100%">
-                <!-- <input id="eventName" type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" class="bg-[#1F1F1F] border border-color-[#aaa] p-1" placeholder="Evento" style="width: 100%"> -->
             </div>
-            <!-- <input calss="text-white" type="text" placeholder="Evento", style="background:#1F1F1F; border-color:#aaa"> -->
         </div>
   
         <!-- Coluna 2: Input Date -->
@@ -213,53 +210,13 @@
             <div class="flex flex-col justify-center items-center" style="flex-grow: 1;">
                 <h2 style="color: #ffffff; margin-bottom: 8px;">Horários Disponíveis</h2>
                 <div id="availableTimes"></div>
-                    <!-- <h2 style="color: #ffffff; margin-bottom: 8px;">Horários Disponíveis</h2>
-                    {% for horario in horarios_disponiveis %}
-                    <button class="whitespace-nowrap items-center text-sm font-medium relative rounded-md transition disabled:cursor-not-allowed text-emphasis border border-default bg-default hover:bg-muted focus-visible:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-empthasis disabled:border-subtle disabled:bg-opacity-30 disabled:text-muted disabled:hover:bg-opacity-30 disabled:hover:text-muted disabled:hover:border-subtle disabled:hover:bg-default px-4 min-h-9 hover:border-brand-default mb-2 flex h-auto w-full flex-grow flex-col justify-center py-2" type="button">
-                        <div class="flex items-center gap-2">{{ horario.inicio }}h - {{ horario.fim }}h</div></button>
-                    </div>
-                    <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
-                        <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
-                          <p>{{ horario.inicio }}h - {{ horario.fim }}h</p>
-                        </div> -->
-                    <!-- <div>
-                        {{ horario.nome }}: {{ horario.inicio }} - {{ horario.fim }} -->
-                    <!-- </div>
-                    {% endfor %} -->
                 <button id="agendarBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" style="position: absolute; bottom: 16px;right: 24px;">Agendar</button>
             </div>
-            <!-- <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
-                <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
-                  <p>{{ hr.horario_inicio }}h - {{ hr.horario_fim }}h</p>
-                </div> -->
-            <!-- {% for hr in horarios_rl %}
-              <div style="align-self: stretch; height: 20px; padding-top: 9px; padding-bottom: 9px; background: #1A1A1A; border-radius: 6px; border: 1px #575757 solid; justify-content: center; align-items: center; display: inline-flex">
-                <div style="width: 96px; height: 20px; text-align: center; color: #FCFCFD; font-size: 14px; font-family: Inter; font-weight: 500; line-height: 20px; word-wrap: break-word">
-                    <div id="availableTimes" class="w-full"></div>
-                    <button type="button">{{ hr.horario_inicio }}h - {{ hr.horario_fim }}h</button>
-                </div>
-              </div>
-            {% endfor %}  -->
           </div>
         </div>
       </div>
     </div>
   </div>
-<!-- Estrutura do Modal -->
-<!-- <div id="modal" class="hidden fixed z-50 left-0 top-0 w-full h-full overflow-auto bg-black bg-opacity-50">
-  <div class="modal-content p-5 rounded-lg m-4 md:mx-auto"
-    <span class="close cursor-pointer float-right font-bold">&times;</span>
-    <div id="modal-content" class="mt-4">
-      <p>Insira suas informações aqui:</p>
-      <div><input type="date" placeholder="DD/MM/YYYY"></div>
-      <input type="text" placeholder="Seu nome">
-      <button>Enviar</button>
-    </div>
-  </div>
-</div> -->
-
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -271,6 +228,7 @@
     
     document.querySelectorAll('[data-modal-open]').forEach(item => {
         item.addEventListener('click', function() {
+            const modal = document.getElementById('modal');
             const salaId = this.getAttribute('data-room-id');
             const salaName = this.getAttribute('data-room-name');
             // Limpa os horários disponíveis anteriores
@@ -282,19 +240,6 @@
         });
     });
 
-    // Configuração do Flatpickr
-    // flatpickr("#datePicker", {
-    //     inline: true,
-    //     locale: "pt",
-    //     onChange: function(selectedDates) {
-    //         const salaId = modal.getAttribute('data-current-sala-id');
-    //         if (!salaId || selectedDates.length === 0) return;
-    //         const data = selectedDates[0].toISOString().slice(0, 10); // Formato 'YYYY-MM-DD'
-    //         const dataSelecionada = instance.formatDate(selectedDates[0], "Y-m-d");
-    //         buscarHorariosDisponiveis(salaId, data);
-    //         },
-    //     });
-    // Chamada inicial para configurar a seleção de horários
     const datePicker = flatpickr("#datePicker", {
         inline: true,
         locale: "pt",
@@ -327,35 +272,6 @@
             alert("Por favor, selecione uma data.");
         }
     });
-    // // Função que mostra os horarios disponiveis
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const datePicker = flatpickr("#datePicker", {
-    //         inline: true,
-    //         locale: "pt",
-    //         onChange: function(selectedDates) {
-    //             const salaId = document.getElementById('modal').getAttribute('data-current-sala-id');
-    //             if (!salaId || selectedDates.length === 0) return;
-    //             const dataSelecionada = selectedDates[0].toISOString().slice(0, 10); // Formato 'YYYY-MM-DD'
-    //             buscarHorariosDisponiveis(salaId, dataSelecionada);
-    //         },
-    //     });
-    // });
-
-    // function buscarHorariosDisponiveis(salaId, data) {
-    //     fetch(`/verificar-disponibilidade/${salaId}/${data}/`)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             const horariosDisponiveis = data.horarios_disponiveis;
-    //             const availableTimesElement = document.getElementById('availableTimes');
-    //             availableTimesElement.innerHTML = ''; // Limpa antes de adicionar novos horários
-    //             horariosDisponiveis.forEach(horario => {
-    //                 const timeSlot = document.createElement('div');
-    //                 timeSlot.innerHTML = `<button type="button">${horario.nome}: ${horario.inicio} - ${horario.fim}</button>`;
-    //                 availableTimesElement.appendChild(timeSlot);
-    //             });
-    //         })
-    //         .catch(error => console.error('Erro ao buscar horários disponíveis:', error));
-    // }
     function buscarHorariosDisponiveis(salaId, data) {
         fetch(`/verificar-disponibilidade/${salaId}/${data}/`)
             .then(response => response.json())
@@ -408,7 +324,6 @@
                 name: nomeEvento,
             }),
         })
-        // .then(response => response.json())
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha na requisição: ' + response.statusText);

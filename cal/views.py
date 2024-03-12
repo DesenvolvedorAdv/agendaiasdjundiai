@@ -1,41 +1,69 @@
 # from django.views.decorators.http import require_http_methods
-from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView, View
+from django.utils.dateparse import parse_datetime
+from django.shortcuts import render
 from .models import Evento
 from home.models import Sala
 import datetime
 import pytz
-from django.utils.dateparse import parse_datetime
-from django.views.decorators.csrf import csrf_exempt
 
-# Create your views here.
-def index(request):  
-    all_events = Evento.objects.all()
-    context = {
-        "events":all_events,
-    }
-    return render(request,'index.html',context)
+class IndexView(TemplateView):
+    template_name = 'index.html'
 
-def all_events(request):
-    all_events = Evento.objects.all()
-    events_list = []
+    # @method_decorator(ensure_csrf_cookie)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['events'] = Evento.objects.all()
+        return context
+
+# def index(request):  
+#     all_events = Evento.objects.all()
+#     context = {
+#         "events":all_events,
+#     }
+#     return render(request,'index.html',context)
+
+class AllEventsView(View):
+    def get(self, request, *args, **kwargs):
+        tz = pytz.timezone('America/Sao_Paulo')
+        eventos_aprovados = Evento.objects.filter(aprovada=True)
+        events_list = []
+
+        for event in eventos_aprovados:
+            start_local = event.start.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+            end_local = event.end.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+            events_list.append({
+                'id': event.id,
+                'title': event.name,
+                'start': start_local,
+                'end': end_local,
+                'backgroundColor': event.cor,
+            })
+
+        return JsonResponse(events_list, safe=False)
     
-    # Definindo o fuso horário desejado
-    tz = pytz.timezone('America/Sao_Paulo')
-    
-    for event in all_events:
-        # Converte as datas para o fuso horário desejado antes de formatar
-        start_local = event.start.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
-        end_local = event.end.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
-        events_list.append({
-            'id': event.id,
-            'title': event.name,
-            'start': start_local,
-            'end': end_local,
-            'backgroundColor': event.cor,  # Se você quer usar o campo 'cor' para definir a cor do evento no calendário
-        })
-    
-    return JsonResponse(events_list, safe=False)
+# def all_events(request):
+#     all_events = Evento.objects.all()
+#     events_list = []
+#     # Definindo o fuso horário desejado
+#     tz = pytz.timezone('America/Sao_Paulo')
+#     eventos_ap = Evento.objects.filter(aprovada=True).values('id', 'start', 'end', 'title')
+#     # eventos_list = list(eventos_ap)
+#     for event in eventos_ap:
+#         # Converte as datas para o fuso horário desejado antes de formatar
+#         start_local = event.start.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+#         end_local = event.end.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+#         events_list.append({
+#             'id': event.id,
+#             'title': event.name,
+#             'start': start_local,
+#             'end': end_local,
+#             'backgroundColor': event.cor,  # Se você quer usar o campo 'cor' para definir a cor do evento no calendário
+#         })
+#     return JsonResponse(events_list, safe=False)
 
 
             # 'start': event.start.strftime("%Y-%m-%dT%H:%M:%S"),
