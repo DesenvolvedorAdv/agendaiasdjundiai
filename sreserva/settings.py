@@ -122,6 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ACCOUNT_SIGNUP_REDIRECT_URL = 'account_login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -160,3 +161,15 @@ CRISPY_TEMPLATE_PACK = 'tailwind'
 # CRISPY_ALLOWED_TEMPLATE_PACKS = "boostrap5"
 
 # CRISPY_TEMPLATE_PACKS = "boostrap5"
+
+# Email
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jundiai.apac@uc.apac.org.br'
+EMAIL_HOST_PASSWORD = 'Grecia#44'

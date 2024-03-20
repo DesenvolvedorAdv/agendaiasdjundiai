@@ -4,21 +4,132 @@
 {% block head %}
 <link href="../static/css/hero.css" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<style>
+/* Estilos padrão para desktop */
+section.tm {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: black;
+    width: 101%;
+    height: 100%;
+    /* Define uma altura base que pode crescer em telas menores */
+    /* min-height: 98vh; Assume a altura total da viewport como altura mínima */
+}
 
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    height: auto; /* Alterado para auto para permitir crescimento */
+}
+
+.hero-section {
+    background-color: black;
+    width: 100%;
+    display: flex;
+    justify-content:  flex-start;
+    align-items: center;
+}
+
+.hero-section video {
+    width: 95%; /* Mantém a largura relativa ao contêiner */
+    min-height: 100vh; /* Altura mínima inicial para garantir cobertura adequada */
+    max-height: 600px;
+    object-fit: cover;
+    autoplay: true;
+    loop: true;
+    muted: true;
+}
+
+/* Tablets em orientação paisagem e retrato */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .tm, .hero-section {
+        max-height: 900px; /* Altura máxima para tablets */
+    }
+}
+
+/* Celulares em orientação paisagem e retrato */
+@media (max-width: 767px) {
+    .tm, .hero-section {
+        height: 80%;
+        min-height: 0;
+        max-height: 500px;
+    }
+}
+@media (max-width: 480px) {
+    .tm, .hero-section {
+        height: 100%;
+        min-height: 0;
+        max-height: 400px; /* Altura máxima para celulares */
+    }}
+/* Media Queries */
+@media (max-width: 767px) {
+    .tm, .hero-section {
+        height: 100%;
+        max-height: 500px; /* Altura máxima para celulares */
+    }
+    .hero-section video {
+        min-height: auto; /* Pode ser necessário ajustar se você quiser uma altura mínima específica */
+        max-height: 100%; /* Garante que o vídeo não exceda a altura do contêiner */
+    }
+}
+
+@media (max-width: 480px) {
+    .tm, .hero-section {
+        height: 100%;
+        min-height: 0;
+        max-height: 400px; /* Altura máxima ajustada para dispositivos ainda menores */
+    }
+}
+</style>
 {% endblock %}
 {% block content %}
 
-<div class="justify-start items-start inline-flex bg-black w-full h-full">
-    <div class="flex flex-col justify-start items-center gap-0 w-full max-w-screen-xl mx-auto">
-        <div class="text-white text-[70px] font-bold font-['Roboto'] mb-4">Reserva das Salas</div>
-        <div class="video-container" style="position: relative; width: 100%; padding-top: 56.25%;">
-            <video class="hero-video" loop autoplay muted playsinline preload="auto" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="{% static 'video/videoigreja.mp4' %}" type="video/mp4"></video>
+<section class="tm">
+    <div class="espaco-superior flex flex-col gap-0 w-full h-full">
+        <div class="text-white text-[70px] font-bold font-['Roboto'] leading-[90px]" style="width: 95%;">Reserva das Salas</div>
+        <div class="hero-section w-full flex justify-center">
+            <video src="static/video/videoigreja.mp4" autoplay loop muted style="width: 95%; object-fit: cover;"></video>
         </div>
     </div>
-</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ajusta a altura após o carregamento da página
+            adjustSectionHeight();
+        
+            // Ajusta a altura ao redimensionar a janela, se necessário
+            window.addEventListener('resize', adjustSectionHeight);
+        
+            function adjustSectionHeight() {
+                // Supondo que seu vídeo tenha um ID ou uma classe específica
+                var videoElement = document.querySelector('.hero-section video');
+                if (videoElement) {
+                    // Obtém a altura do vídeo
+                    var videoHeight = videoElement.offsetHeight;
+        
+                    // Define a altura do contêiner .tm ou .hero-section, adicionando 16px à altura do vídeo
+                    document.querySelector('.tm').style.height = `${videoHeight + 32}px`;
+                    // Se quiser aplicar a ambos os elementos, repita o processo para .hero-section
+                }
+            }
+        });
+    </script>
+</section>
+<!-- <section class="justify-start inline-flex bg-black w-full h-full tm">
+    <div class="espaco-superior flex flex-col gap-0 w-full h-full">
+         <div class="text-white text-[70px] font-bold font-['Roboto'] leading-[90px]" style="width: 95%; height: 95%;">Reserva das Salas</div>
+        <div class="hero-section w-full h-full flex justify-center items-center">
+            <video src="static/video/videoigreja.mp4" style="width: 95%; height: 95%; object-fit: cover;" autoplay loop muted></video>
+        </div>
+    </div>
+</section> -->
 
-
-<div class="flex flex-col justify-start items-start gap-20 bg-white px-4 py-7 md:px-16 md:py-28 w-full max-w-screen-xl mx-auto">
+<section class="flex flex-col justify-start items-start gap-20 bg-white px-4 py-7 md:px-16 md:py-28 w-full max-w-screen-xl mx-auto">
     <div class="flex font-['Roboto'] flex-col md:flex-row self-stretch justify-start items-start gap-20">
         <div class="flex flex-col justify-start items-start gap-8 grow">
             <div class="flex flex-col justify-start items-start gap-4">
@@ -69,22 +180,7 @@
             </div>
         </div>
     </div>
-</div>
-
-
-
-<!-- <section class="bg-black flex justify-center py-18">
-    <div class="relative w-full h-full">
-        Foi removido o div de fundo preto absoluto, já que o section já tem fundo preto
-        <div class="absolute top-0 left-0 w-full md:w-auto h-64 md:h-auto p-14 md:p-0 md:px-20 text-white text-6xl md:text-9xl font-staatliches font-normal leading-tight break-words">
-            Selecione uma sala<br>abaixo para solicitar<br>um horário.
-        </div>
-        <div class="absolute top-64 left-0 w-full h-auto p-14 md:p-0 md:px-20 rounded-2xl flex flex-col items-start gap-14">
-            Conteúdo dinâmico aqui
-        </div>
-    </div>
-</section> -->
-<!-- <div class="flex flex-col justify-start items-start gap-4 grow"> -->
+</section>
 
 <section class="bg-black flex flex-col justify-start gap-4 grow py-18">
     <div class="relative w-full h-full">

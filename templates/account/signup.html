@@ -1,5 +1,44 @@
-{% extends "account/base_entrance.html" %}
-{% load allauth i18n socialaccount %}
+{% extends "base_l.html" %}
+{% load i18n %}
+{% load allauth account socialaccount %}
+{% block head %}
+{% load static %}
+{% endblock %}
+{% block content0 %}
+<img class="image" src="{% static 'img/logo_iasd.png' %}" alt="logo">
+<div class="message">Maranata... O senhor logo vem IASD</div>
+
+<form method="post" action="{% url 'account_signup' %}" class="login-form">
+    {% csrf_token %}
+    <div style="color: #353535; font-size: 24px; font-weight: 400; word-wrap: break-word;">{% trans "Cadastro" %}</div>
+    <input type="text" name="username" placeholder="{% trans 'Username' %}" style="height: 35%;" class="input" required>
+    <input type="text" name="email" placeholder="{% trans 'E-mail' %}" style="height: 35%;" class="input" required>
+    <input type="password" name="password1" placeholder="{% trans 'Password' %}" style="height: 35%;" class="input" required>
+    <input type="password" name="password2" placeholder="{% trans 'Repita a Senha' %}" style="height: 35%;" class="input" required>
+    <!-- <input type="Departamento" name="departamento" placeholder="{% trans 'Departamento' %}" style="height: 35%;" class="input" required> -->
+    <button type="submit" class="login-button" style="height: 35%; background: #171717">{% trans "Concluido" %}</button>
+    <div>
+        <span style="color: #353535; font-size: 9.75px; font-weight: 400;">{% trans "Já tem uma conta?" %} </span><a href="{% url 'account_login' %}" class="signup-message">{% trans "Login" %}</a>
+    </div>
+</form>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+<script>
+    function validatePassword(input) {
+        if (input.validity.patternMismatch) {
+            input.setCustomValidity("Sua senha precisa conter pelo menos 8 caracteres e não pode ser inteiramente numérica.");
+        } else if (input.validity.tooShort) {
+            input.setCustomValidity("Sua senha precisa conter pelo menos 8 caracteres.");
+        } else {
+            input.setCustomValidity("");
+        }
+    }
+</script>
+{% endblock %}
+<!-- {% load allauth i18n socialaccount %}
 {% block head_title %}
     {% trans "Signup" %}
 {% endblock head_title %}
@@ -29,4 +68,4 @@
         {% endslot %}
     {% endelement %}
     {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-{% endblock content %}
+{% endblock content %} -->

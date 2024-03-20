@@ -95,8 +95,14 @@ class AgendarEventoView(View):
             logger.error("Erro ao agendar evento: %s", e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-class Paginaperfil(LoginRequiredMixin, TemplateView):
+class PaginaPerfil(LoginRequiredMixin, TemplateView):
     template_name = "editarperfil.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['eventos_usuario'] = Evento.objects.filter(usuario=self.request.user).order_by('start')
+        context['usuario'] = self.request.user
+        return context
     # def your_view(self):
     #     events = Events.objects.all()
     #     event_data = [

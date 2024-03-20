@@ -3,15 +3,16 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from cal.views import AllEventsView, IndexView
-# from home.views import Homepage
+from home.views import PaginaPerfil #Homepage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('email/', include('envia_email')),
     path('', include('home.urls',namespace='home')),
     path('cal/', IndexView.as_view(), name='index'),
     path('all_events/', AllEventsView.as_view(), name='all_events'),
     path('accounts/', include('allauth.urls')),
-    # path('perfil/', Paginaperfil.as_view(), name='editarperfil'),
+    path('accounts/profile/', PaginaPerfil.as_view(), name='reservas'),
 ]
     # path('add_event/', views.add_event, name='add_event'),
     # path('update/', views.update, name='update'),

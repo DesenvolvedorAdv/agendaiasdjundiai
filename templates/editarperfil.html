@@ -7,5 +7,48 @@
 {% endblock %}
 
 {% block content %}
-    Editar perfil do Usuario
+<div style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; width: 100%; height: 100%; gap: 25px; position: relative;">
+    <div style="margin-top: 6rem; width: 1239px; height: 274px; background: #D9D9D9; border-radius: 10px; position: relative;">
+        <img src="https://via.placeholder.com/1239x222" style="width: 1239px; height: 222px; background: linear-gradient(0deg, #C4C4C4 0%, #C4C4C4 100%); border-radius: 5px; position: absolute; top: 0; left: 0;" />
+        <div style="display: flex; position: absolute; top: 0; left: 0; align-items: center; gap: 20px; padding: 20px;">
+            <img src="https://via.placeholder.com/180x180" style="width: 179.82px; height: 179.82px; background: linear-gradient(0deg, #FBB03B 0%, #FBB03B 100%); border-radius: 9999px;" />
+            <div>
+                <div style="color: white; font-size: 30px; font-family: 'Nunito', sans-serif; font-weight: 700;">{{ usuario.get_full_name|default:usuario.username }}</div>
+                <div style="opacity: 0.70; color: white; font-size: 16px; font-family: 'Nunito', sans-serif; font-weight: 400;">Departamento</div>
+            </div>
+        </div>
+        <button style="position: absolute; right: 20px; bottom: -20px; background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">Editar Perfil</button>
+    </div>
+</div>
+<div style="margin-top: 1rem"></div>
+<div style="background: #D9D9D9; display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px;">
+    <div style="width: 1239px; background: #FFFFFF; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #F3F4F6; text-align: left;">
+                    <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Nome do Evento</th>
+                    <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Início</th>
+                    <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Fim</th>
+                    <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Sala</th>
+                    <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evento in eventos_usuario %}
+                <tr style="border-bottom: 1px solid #E5E7EB;">
+                    <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.name }}</td>
+                    <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.start|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.end|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.sala }}</td>
+                    <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.aprovada|yesno:"Aprovado,Não Aprovado" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 16px; text-align: center; font-size: 14px; font-family: Montserrat; font-weight: 500;">Nenhum evento encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
