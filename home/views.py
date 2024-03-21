@@ -1,8 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView, DetailView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic.edit import DeleteView
 from django.http import JsonResponse
-from django.db.models import Q
+from django.urls import reverse_lazy, reverse
+from django.contrib import messages
+# from django.db.models import Q
 from .models import Sala
 from cal.models import Evento
 import datetime
@@ -103,6 +106,27 @@ class PaginaPerfil(LoginRequiredMixin, TemplateView):
         context['eventos_usuario'] = Evento.objects.filter(usuario=self.request.user).order_by('start')
         context['usuario'] = self.request.user
         return context
+    
+class EventoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Evento
+    template_name = 'evento_confirm_delete.html'  # Especifique o caminho do seu template
+    success_url = reverse_lazy('reservas')
+    
+    def test_func(self):
+        evento = self.get_object()
+        return evento.usuario == self.request.user
+
+class AprovarEventoView(UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, request, *args, **kwargs):
+        evento_id = kwargs.get('pk')
+        evento = get_object_or_404(Evento, id=evento_id)
+        evento.aprovada = True
+        evento.save()
+        messages.success(request, "Evento aprovado com sucesso.")
+        return redirect(reverse('reservas'))
     # def your_view(self):
     #     events = Events.objects.all()
     #     event_data = [
