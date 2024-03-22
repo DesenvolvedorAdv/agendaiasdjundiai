@@ -4,6 +4,7 @@
 
 
 {% block head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
 <style>
     .evento-nao-aprovado {
         background-color: #ffdada; /* Cor de fundo vermelha clara para destacar */
@@ -11,8 +12,6 @@
         font-weight: 700;
     }
 </style>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -29,6 +28,8 @@
         <button style="position: absolute; right: 20px; bottom: -15%; background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">Editar Perfil</button>
     </div>
 </div>
+{% include 'evento_confirm_delete.html' %}
+
 <!-- <div style="margin-top: 1rem"></div> -->
 <section class="flex flex-col justify-start items-start gap-20 bg-white px-4 py-7 md:px-16 md:py-28 w-full max-w-screen-xl mx-auto">
     <table style="background: #F3F4F6; width: 100%; border-collapse: collapse; font-weight: 500;">
@@ -54,12 +55,12 @@
                 <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.sala.name }}</td>
                 <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.aprovada|yesno:"Aprovado,Não Aprovado" }}</td>
                 <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">
-                    <button type="button" class="btn btn-danger btn-sm delete-event-btn" data-toggle="modal" data-target="#confirmDeleteModal" data-event-id="{{ evento.id }}" fill="black">
-                        <i class="fas fa-trash" style="color:black;">🗑</i>
+                    <button type="button" class="btn btn-danger btn-sm delete-event-btn" data-toggle="modal" data-target="#confirmDeleteModal" data-event-id="{{ evento.id }}" id="openModalBtn">
+                        <i class="bi bi-trash-fill" style="color:black;"></i>
                     </button>
                     <!-- <a href="{% url 'home:delete_evento' evento.id %}" style="color: red;">🗑</a> -->
                     {% if request.user.is_superuser %}
-                        | <a href="{% url 'home:aprovar_evento' evento.id %}" style="color: green;">Aprovar</a>
+                        | <a href="{% url 'home:aprovar_evento' evento.id %}" style="color: green;"><i class="bi bi-check-circle-fill"></i></a>
                     {% endif %}
                 </td>
             </tr>
@@ -72,33 +73,73 @@
     </table>
 </section>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var deleteButtons = document.querySelectorAll('.delete-event-btn');
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById('confirmDeleteModal');
+        var openModalBtns = document.querySelectorAll('.delete-event-btn'); // Seleciona todos os botões
 
-  deleteButtons.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var eventId = this.getAttribute('data-event-id');
-      // Atualizar o data-event-id do botão de confirmação no modal
-      var confirmDeleteAction = document.getElementById('confirmDeleteAction');
-      if(confirmDeleteAction) {
-          confirmDeleteAction.setAttribute('data-event-id', eventId);
-          $('#confirmDeleteModal').modal('show');
-      }
-    });
-  });
+        openModalBtns.forEach(btn => btn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+        }));
 
-  // Mover o listener de clique para o botão de confirmação dentro do modal
-  var confirmDeleteAction = document.getElementById('confirmDeleteAction');
-  if(confirmDeleteAction) {
-      confirmDeleteAction.addEventListener('click', function() {
-        var eventId = this.getAttribute('data-event-id');
-        if(eventId) {
-            window.location.href = `/evento/${eventId}/delete/`;
+        var closeModalBtn = document.getElementById('closeModalBtn');
+        var cancelBtn = document.getElementById('cancelBtn');
+
+        function closeModal() {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
         }
-      });
-  }
-});
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-event-btn');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                // Corrija o caminho de acordo com o definido em urls.py
+                const actionUrl = `/evento/${eventId}/delete/`;
+                document.querySelector('#confirmDeleteModal form').action = actionUrl;
+                $('#confirmDeleteModal').modal('show');
+            });
+        });
+    });
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var modal = document.getElementById('confirmDeleteModal');
+    //     var openModalBtn = document.getElementById('openModalBtn');
+    //     var closeModalBtn = document.getElementById('closeModalBtn');
+    //     var cancelBtn = document.getElementById('cancelBtn');
+
+    //     openModalBtn.addEventListener('click', function() {
+    //         modal.style.display = 'flex';
+    //         modal.classList.add('show');
+    //     });
+
+    //     function closeModal() {
+    //         modal.style.display = 'none';
+    //         modal.classList.remove('show');
+    //     }
+
+    //     closeModalBtn.addEventListener('click', closeModal);
+    //     cancelBtn.addEventListener('click', closeModal);
+
+    //     // Optional: Listen for a click on the modal background to close the modal
+    //     window.addEventListener('click', function(event) {
+    //         if (event.target == modal) {
+    //             closeModal();
+    //         }
+    //     });
+    // });
 </script>
+
 <!-- <div style="background: #D9D9D9; display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px;">
     <div style="width: 1239px; background: #FFFFFF; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
         <table style="width: 100%; border-collapse: collapse;">

@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import TemplateView, DetailView, View
+from django.views.generic import TemplateView, DetailView, View, ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import DeleteView
 from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 # from django.db.models import Q
-from .models import Sala
+from .models import Sala, Faq
 from cal.models import Evento
 import datetime
 import logging
@@ -22,6 +22,19 @@ class Homepage(LoginRequiredMixin,TemplateView):
         return context
 
 
+class FaqListView(LoginRequiredMixin, ListView):
+    model = Faq
+    template_name = 'homepage.html'
+    context_object_name = 'questions'
+# class FaqListView(LoginRequiredMixin, DetailView):
+#     model = Faq
+#     template_name = 'homepage.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['questions'] = Faq.objects.all()
+#         return context
+        
 class detalhe_sala(LoginRequiredMixin, DetailView):
     model = Sala
     template_name = "pop_up.html"
@@ -126,9 +139,9 @@ class PaginaPerfil(LoginRequiredMixin, TemplateView):
 
 class EventoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Evento
-    template_name = 'evento_confirm_delete.html'  # Especifique o caminho do seu template
+    template_name = 'editarperfil.html'
     success_url = reverse_lazy('reservas')
-    
+
     def test_func(self):
         evento = self.get_object()
         return evento.usuario == self.request.user

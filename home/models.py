@@ -22,7 +22,8 @@ class Sala(models.Model):
     cor = models.CharField(max_length=7, null=True, blank=True)
     class Meta:
         db_table = "tblsala"
-
+    def __str__(self):
+        return self.name
 
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
@@ -36,3 +37,11 @@ class Events(models.Model):
     class Meta:
         db_table = "tblevents"
 
+class Faq(models.Model):
+    id = models.AutoField(primary_key=True)
+    question = models.CharField(max_length=255, null=True, blank=True)
+    response = models.CharField(max_length=500, null=True, blank=True)
+    class Meta:
+        db_table = "tblquestions"
+    def __str__(self):
+        return self.question

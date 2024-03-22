@@ -36,3 +36,85 @@
         font-size: 5rem; /* Ajuste conforme necessário para visibilidade */
     }
 }
+
+/* Estilos Verificados */
+section.tm {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: black;
+    width: 101%;
+    height: 100%;
+    /* Define uma altura base que pode crescer em telas menores */
+    /* min-height: 98vh; Assume a altura total da viewport como altura mínima */
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    height: auto; /* Alterado para auto para permitir crescimento */
+}
+
+.hero-section {
+    background-color: black;
+    width: 100%;
+    display: flex;
+    justify-content:  flex-start;
+    align-items: center;
+}
+
+.hero-section video {
+    width: 95%; /* Mantém a largura relativa ao contêiner */
+    min-height: 100vh; /* Altura mínima inicial para garantir cobertura adequada */
+    max-height: 600px;
+    object-fit: cover;
+    autoplay: true;
+    loop: true;
+    muted: true;
+}
+
+/* Tablets em orientação paisagem e retrato */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .tm, .hero-section {
+        max-height: 900px; /* Altura máxima para tablets */
+    }
+}
+
+/* Celulares em orientação paisagem e retrato */
+@media (max-width: 767px) {
+    .tm, .hero-section {
+        height: 80%;
+        min-height: 0;
+        max-height: 500px;
+    }
+}
+@media (max-width: 480px) {
+    .tm, .hero-section {
+        height: 100%;
+        min-height: 0;
+        max-height: 400px; /* Altura máxima para celulares */
+    }}
+/* Media Queries */
+@media (max-width: 767px) {
+    .tm, .hero-section {
+        height: 100%;
+        max-height: 500px; /* Altura máxima para celulares */
+    }
+    .hero-section video {
+        min-height: auto; /* Pode ser necessário ajustar se você quiser uma altura mínima específica */
+        max-height: 100%; /* Garante que o vídeo não exceda a altura do contêiner */
+    }
+}
+
+@media (max-width: 480px) {
+    .tm, .hero-section {
+        height: 100%;
+        min-height: 0;
+        max-height: 400px; /* Altura máxima ajustada para dispositivos ainda menores */
+    }
+}
