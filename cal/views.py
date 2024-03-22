@@ -40,11 +40,39 @@ class AllEventsView(View):
                 'title': event.name,
                 'start': start_local,
                 'end': end_local,
+                'salaNome': event.sala.name if event.sala else 'Sem sala',  # Adiciona o nome da sala
+                'usuario': event.usuario.get_username() if event.usuario else 'Anônimo',  # Adiciona o nome do usuário
+                # 'departamento': event.usuario.departamento if event.usuario else 'Sem departamento',  # Adiciona o departamento
                 'backgroundColor': event.cor,
             })
 
         return JsonResponse(events_list, safe=False)
-    
+
+# class AllEventsView(View):
+#     def get(self, request, *args, **kwargs):
+#         tz = pytz.timezone('America/Sao_Paulo')
+#         eventos_aprovados = Evento.objects.filter(aprovada=True).select_related('usuario', 'sala')
+#         events_list = []
+
+#         for event in eventos_aprovados:
+#             start_local = event.start.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+#             end_local = event.end.astimezone(tz).strftime("%Y-%m-%dT%H:%M:%S")
+#             events_list.append({
+#                 'id': event.id,
+#                 'title': event.name,
+#                 'start': start_local,
+#                 'end': end_local,
+#                 'salaNome': event.sala.name if event.sala else 'Sem sala',  # Adiciona o nome da sala
+#                 'usuario': event.usuario.get_username() if event.usuario else 'Anônimo',  # Adiciona o nome do usuário
+#                 'departamento': event.usuario.departamento if event.usuario else 'Sem departamento',  # Adiciona o departamento
+#                 'backgroundColor': event.cor,  # Cor de fundo do evento
+#             })
+
+        return JsonResponse(events_list, safe=False)
+
+
+
+
 # def all_events(request):
 #     all_events = Evento.objects.all()
 #     events_list = []

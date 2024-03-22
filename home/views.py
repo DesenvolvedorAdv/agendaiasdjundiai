@@ -98,15 +98,32 @@ class AgendarEventoView(View):
             logger.error("Erro ao agendar evento: %s", e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
+# class PaginaPerfil(LoginRequiredMixin, TemplateView):
+#     template_name = "editarperfil.html"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['eventos_usuario'] = Evento.objects.filter(usuario=self.request.user).order_by('start')
+#         context['usuario'] = self.request.user
+#         return context
+
 class PaginaPerfil(LoginRequiredMixin, TemplateView):
     template_name = "editarperfil.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['eventos_usuario'] = Evento.objects.filter(usuario=self.request.user).order_by('start')
+
+        # Verifica se o usuário é superusuário
+        if self.request.user.is_superuser:
+            # Busca os últimos 30 lançamentos de todos os usuários
+            context['eventos_usuario'] = Evento.objects.all().order_by('-id')[:30]
+        else:
+            # Busca os eventos específicos do usuário logado
+            context['eventos_usuario'] = Evento.objects.filter(usuario=self.request.user).order_by('-id')
+
         context['usuario'] = self.request.user
         return context
-    
+
 class EventoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Evento
     template_name = 'evento_confirm_delete.html'  # Especifique o caminho do seu template

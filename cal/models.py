@@ -15,7 +15,7 @@ class Evento(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
-    # sala = models.ManyToManyField(Sala)
+    # departamento = models.
     sala = models.ForeignKey(Sala, on_delete=models.CASCADE, null=True)
     aprovada = models.BooleanField(default=False)
     cor = models.CharField(max_length=7, null=True, blank=True)

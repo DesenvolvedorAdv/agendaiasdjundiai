@@ -8,6 +8,7 @@
     .evento-nao-aprovado {
         background-color: #ffdada; /* Cor de fundo vermelha clara para destacar */
         color: #d9534f; /* Cor do texto vermelho */
+        font-weight: 700;
     }
 </style>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
@@ -16,8 +17,8 @@
 
 {% block content %}
 <div style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; width: 100%; height: 100%; gap: 25px; position: relative;">
-    <div style="margin-top: 6rem; width: 1239px; height: 274px; background: #D9D9D9; border-radius: 10px; position: relative;">
-        <img src="https://via.placeholder.com/1239x222" style="width: 1239px; height: 222px; background: linear-gradient(0deg, #C4C4C4 0%, #C4C4C4 100%); border-radius: 5px; position: absolute; top: 0; left: 0;" />
+    <div style="margin-top: 6rem; width: 90%; height: 274px; background: #D9D9D9; border-radius: 10px; position: relative;">
+        <img src="{% static 'img/walp.jpeg' %}" style="width: 100%; height: 85%; background: linear-gradient(0deg, #C4C4C4 0%, #C4C4C4 100%); border-radius: 5px; position: absolute; top: 0; left: 0;" />
         <div style="display: flex; position: absolute; top: 0; left: 0; align-items: center; gap: 20px; padding: 20px;">
             <img src="https://via.placeholder.com/180x180" style="width: 179.82px; height: 179.82px; background: linear-gradient(0deg, #FBB03B 0%, #FBB03B 100%); border-radius: 9999px;" />
             <div>
@@ -25,48 +26,51 @@
                 <div style="opacity: 0.70; color: white; font-size: 16px; font-family: 'Nunito', sans-serif; font-weight: 400;">Departamento</div>
             </div>
         </div>
-        <button style="position: absolute; right: 20px; bottom: -20px; background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">Editar Perfil</button>
+        <button style="position: absolute; right: 20px; bottom: -15%; background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">Editar Perfil</button>
     </div>
 </div>
-<div style="margin-top: 1rem"></div>
-<table style="width: 100%; border-collapse: collapse;">
-    <thead>
-        <tr style="background-color: #F3F4F6; text-align: left;">
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Nome do Evento</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Data</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Início</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Fim</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Sala</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Status</th>
-            <th style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 700;">Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for evento in eventos_usuario %}
-        <tr style="border-bottom: 1px solid #E5E7EB;">
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.name }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.start|date:"d/m/Y" }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.start|date:"H:i" }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.end|date:"H:i" }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.sala.name }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">{{ evento.aprovada|yesno:"Aprovado,Não Aprovado" }}</td>
-            <td style="padding: 16px; font-size: 14px; font-family: Montserrat; font-weight: 500;">
-                <button type="button" class="btn btn-danger btn-sm delete-event-btn" data-toggle="modal" data-target="#confirmDeleteModal" data-event-id="{{ evento.id }}">
-                    🗑
-                </button>
-                <!-- <a href="{% url 'home:delete_evento' evento.id %}" style="color: red;">🗑</a> -->
-                {% if request.user.is_superuser %}
-                    | <a href="{% url 'home:aprovar_evento' evento.id %}" style="color: green;">Aprovar</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="7" style="padding: 16px; text-align: center; font-size: 14px; font-family: Montserrat; font-weight: 500;">Nenhum evento encontrado.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!-- <div style="margin-top: 1rem"></div> -->
+<section class="flex flex-col justify-start items-start gap-20 bg-white px-4 py-7 md:px-16 md:py-28 w-full max-w-screen-xl mx-auto">
+    <table style="background: #F3F4F6; width: 100%; border-collapse: collapse; font-weight: 500;">
+        <thead>
+            <tr style="text-align: left;">
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Nome do Evento</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Data</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Início</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Fim</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Sala</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Status</th>
+                <th style="padding: 16px; font-size: 16px; font-family: Montserrat; font-weight: 750;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in eventos_usuario %}
+            <tr class="{% if not evento.aprovada %}evento-nao-aprovado{% endif %}">
+            <!-- <tr style="border-bottom: 1px solid #E5E7EB;"> -->
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.name }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.start|date:"d/m/Y" }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.start|date:"H:i" }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.end|date:"H:i" }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.sala.name }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">{{ evento.aprovada|yesno:"Aprovado,Não Aprovado" }}</td>
+                <td style="padding: 16px; font-size: 14px; font-family: Montserrat;">
+                    <button type="button" class="btn btn-danger btn-sm delete-event-btn" data-toggle="modal" data-target="#confirmDeleteModal" data-event-id="{{ evento.id }}" fill="black">
+                        <i class="fas fa-trash" style="color:black;">🗑</i>
+                    </button>
+                    <!-- <a href="{% url 'home:delete_evento' evento.id %}" style="color: red;">🗑</a> -->
+                    {% if request.user.is_superuser %}
+                        | <a href="{% url 'home:aprovar_evento' evento.id %}" style="color: green;">Aprovar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="padding: 16px; text-align: center; font-size: 14px; font-family: Montserrat; font-weight: 500;">Nenhum evento encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   var deleteButtons = document.querySelectorAll('.delete-event-btn');

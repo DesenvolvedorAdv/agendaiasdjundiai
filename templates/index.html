@@ -8,6 +8,20 @@
 <link href="'{% static 'css/custom.css' %}'" rel="stylesheet">
 {% endblock %}
 {% block content2 %}
+<!-- Modal para informações do evento -->
+<div class="modal fade" id="eventInfoModal" tabindex="-1" aria-labelledby="eventInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventInfoModalLabel">Informações do Evento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- O conteúdo do modal será preenchido dinamicamente -->
+        </div>
+      </div>
+    </div>
+</div>
 <div class="mt-16">
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -32,80 +46,101 @@
 <script src="{% static 'js/bootstrap5/index.global.min.js' %}"></script>
 <script src="{% static 'js/core/locales-all.global.min.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
-      
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-          locale: 'pt-br',
-          timeZone: 'America/Sao_Paulo',
-          themeSystem: 'bootstrap5',
-          headerToolbar: {
-              left: 'prev,next today',
-              center: 'title',
-              right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
-          },
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'pt-br',
+        timeZone: 'America/Sao_Paulo',
+        themeSystem: 'bootstrap5',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+        },
         //   initialDate: '2024-01-12',
-          navLinks: true, // permite navegar clicando nos dias/semanas
-          selectable: true,
-          selectMirror: true,
-          events: '/all_events', // URL para buscar eventos
-          editable: true,
-          select: function(info) {
-              var title = prompt("Nome do Evento:");
-              if (title) {
-                  var eventData = {
-                      title: title,
-                      start: info.startStr,
-                      end: info.endStr,
-                  };
-                  // Chama a função para adicionar evento aqui
-                  addEvent(eventData);
-              }
-              calendar.unselect();
-          },
-          eventClick: function(info) {
-              // Implemente a lógica de clique em evento aqui, se necessário
-          },
-          // Adicione outros manipuladores de eventos conforme necessário
-      });
-    
-      calendar.render();
-    
-      function addEvent(eventData) {
-          fetch('/add_event', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCsrfToken(), // Função para obter o token CSRF
-              },
-              body: JSON.stringify(eventData)
-          })
-          .then(response => response.json())
-          .then(data => {
-              if(data.status === "success") {
-                  calendar.refetchEvents();
-                  alert("Evento adicionado com sucesso");
-              }
-          })
-          .catch(error => {
-              console.error('Erro:', error);
-              alert("Erro ao adicionar evento");
-          });
-      }
-    
-      function getCsrfToken() {
-          // Retorna o valor do cookie CSRFToken do Django
-          var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-              var cookie = cookies[i].trim();
-              if (cookie.startsWith('csrftoken=')) {
-                  return cookie.substring('csrftoken='.length, cookie.length);
-              }
-          }
-        return '';
-      }
-      
+        navLinks: true, // permite navegar clicando nos dias/semanas
+        selectable: true,
+        selectMirror: true,
+        events: '/all_events', // URL para buscar eventos
+        editable: true,
+        select: function(info) {
+            var title = prompt("Nome do Evento:");
+            if (title) {
+                var eventData = {
+                    title: title,
+                    start: info.startStr,
+                    end: info.endStr,
+                };
+                // Chama a função para adicionar evento aqui
+                addEvent(eventData);
+            }
+            calendar.unselect();
+        },
+        eventClick: function(info) {
+            var eventData = info.event.extendedProps; // Acessa as propriedades estendidas do evento
+            var modalTitle = document.querySelector('#eventInfoModal .modal-title');
+            var modalBody = document.querySelector('#eventInfoModal .modal-body');
+            var modalContent = document.querySelector('#eventInfoModal .modal-content');
+
+            // Configura o título do modal para o nome do evento
+            modalTitle.textContent = info.event.title;
+
+            // Configura o corpo do modal com as informações do evento
+            modalBody.innerHTML = '<p>Sala: ' + eventData.salaNome + '</p>' +
+                                '<p>Usuário: ' + eventData.usuario + '</p>' +
+                                '<p>Departamento: ' + eventData.departamento + '</p>' +
+                                '<p>Data: ' + info.event.start.toLocaleDateString() + '</p>' +
+                                '<p>Horário de Início: ' + info.event.start.toLocaleTimeString() + '</p>' +
+                                '<p>Horário de Fim: ' + info.event.end.toLocaleTimeString() + '</p>';
+
+            // Configura a cor de fundo do modal de acordo com o evento
+            modalContent.style.backgroundColor = eventData.cor;
+
+            // Exibe o modal
+            var eventInfoModal = new bootstrap.Modal(document.getElementById('eventInfoModal'), {
+                keyboard: true
+            });
+            eventInfoModal.show();
+        }
     });
+
+    calendar.render();
+
+    function addEvent(eventData) {
+        fetch('/add_event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(), // Função para obter o token CSRF
+            },
+            body: JSON.stringify(eventData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === "success") {
+                calendar.refetchEvents();
+                alert("Evento adicionado com sucesso");
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert("Erro ao adicionar evento");
+        });
+    }
+
+    function getCsrfToken() {
+        // Retorna o valor do cookie CSRFToken do Django
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                return cookie.substring('csrftoken='.length, cookie.length);
+            }
+        }
+    return '';
+    }
+});
 </script>
 <style>
 .btn-primary {
